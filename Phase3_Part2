@@ -1,0 +1,288 @@
+
+import java. util.Scanner;
+
+
+
+class InvalidTransactionException extends Exception {
+
+    public InvalidTransactionException(String message) {
+
+        super(message);
+
+    }
+
+}
+
+
+
+abstract class Account {
+
+    protected String accountNumber;
+
+    protected String accountHolder;
+
+    protected double balance;
+
+    public abstract void withdrawal(double amount) throws InvalidTransactionException;
+
+    public abstract void deposit(double amount) throws InvalidTransactionException;
+
+    public abstract double balance();
+
+}
+
+
+
+class CheckingAccount extends Account {
+
+    private String transactionDate;
+
+    private String transactionType;
+
+    private double transactionAmount;
+
+    private static final double SERVICE_FEE = 0.50;
+
+    private static final double INTEREST_RATE = 0.02;
+
+    public CheckingAccount(String accountNumber, String accountHolder) {
+
+        this.accountNumber = accountNumber;
+
+        this.accountHolder = accountHolder;
+
+        this.balance = 0.0;
+
+    }
+
+    @Override
+
+    public void withdrawal(double amount) throws InvalidTransactionException {
+
+        if (amount > balance) {
+
+            throw new InvalidTransactionException("Insufficient funds for withdrawal");
+
+        }
+
+        balance -= amount;
+
+        balance -= SERVICE_FEE;
+
+        applyInterest();
+
+    }
+
+    @Override
+
+    public void deposit(double amount) throws InvalidTransactionException {
+
+        if (amount <= 0) {
+
+            throw new InvalidTransactionException("Deposit amount must be greater than zero");
+
+        }
+
+        balance += amount;
+
+        balance -= SERVICE_FEE;
+
+        applyInterest();
+
+    }
+
+    @Override
+
+    public double balance() {
+
+        return balance;
+
+    }
+
+    private void applyInterest() {
+
+        balance += balance * INTEREST_RATE;
+
+    }
+
+}
+
+
+
+class SavingsAccount extends Account {
+
+    private String transactionDate;
+
+    private String transactionType;
+
+    private double transactionAmount;
+
+    private static final double SERVICE_FEE = 0.25;
+
+    private static final double INTEREST_RATE = 0.05;
+
+    public SavingsAccount(String accountNumber, String accountHolder) {
+
+        this.accountNumber = accountNumber;
+
+        this.accountHolder = accountHolder;
+
+        this.balance = 0.0;
+
+    }
+
+    @Override
+
+    public void withdrawal(double amount) throws InvalidTransactionException {
+
+        if (amount > balance) {
+
+            throw new InvalidTransactionException("Insufficient funds for withdrawal");
+
+        }
+
+        balance -= amount;
+
+        balance -= SERVICE_FEE;
+
+        applyInterest();
+
+    }
+
+    @Override
+
+    public void deposit(double amount) throws InvalidTransactionException {
+
+        if (amount <= 0) {
+
+            throw new InvalidTransactionException("Deposit amount must be greater than zero");
+
+        }
+
+        balance += amount;
+
+        balance -= SERVICE_FEE;
+
+        applyInterest();
+
+    }
+
+    @Override
+
+    public double balance() {
+
+        return balance;
+
+    }
+
+    private void applyInterest() {
+
+        balance += balance * INTEREST_RATE;
+
+    }
+
+}
+
+
+
+public class BankAcctApp {
+
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        // Create CheckingAccount
+
+        CheckingAccount checkingAccount = null;
+
+        try {
+
+            checkingAccount = createCheckingAccount(scanner);
+
+        } catch (InvalidTransactionException e) {
+
+            System.out.println(e.getMessage());
+
+        }
+
+        // Create SavingsAccount
+
+        SavingsAccount savingsAccount = null;
+
+        try {
+
+            savingsAccount = createSavingsAccount(scanner);
+
+        } catch (InvalidTransactionException e) {
+
+            System.out.println(e.getMessage());
+
+        }
+
+        // Example transactions
+
+        try {
+
+            checkingAccount.deposit(100.0);
+
+            checkingAccount.withdrawal(50.0);
+
+            savingsAccount.deposit(200.0);
+
+            savingsAccount.withdrawal(150.0);
+
+            // Display balances
+
+            System.out.println("Checking Account Balance: $" + checkingAccount.balance());
+
+            System.out.println("Savings Account Balance: $" + savingsAccount.balance());
+
+        } catch (InvalidTransactionException e) {
+
+            System.out.println(e.getMessage());
+
+        }
+
+    }
+
+
+
+    private static CheckingAccount createCheckingAccount(Scanner scanner) throws InvalidTransactionException {
+
+        System.out.println("Creating Checking Account");
+
+        System.out.print("Enter account number: ");
+
+        String accountNumber = scanner.next();
+
+        System.out.print("Enter account holder: ");
+
+        String accountHolder = scanner.next();
+
+        return new CheckingAccount(accountNumber, accountHolder);
+
+    }
+
+
+
+    private static SavingsAccount createSavingsAccount(Scanner scanner) throws InvalidTransactionException {
+
+        System.out.println("Creating Savings Account");
+
+        System.out.print("Enter account number: ");
+
+        String accountNumber = scanner.next();
+
+        System.out.print("Enter account holder: ");
+
+        String accountHolder = scanner.next();
+
+        return new SavingsAccount(accountNumber, accountHolder);
+
+    }
+
+}
+
+
+
+
